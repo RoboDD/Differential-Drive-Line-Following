@@ -38,7 +38,7 @@ void loop() {
 
   pwm = 44 * dir;
 
-  motors.set_chasis_power(30+pwm,30-pwm);
+  motors.set_chasis_power(30 + pwm, 30 - pwm);
 
   delay(10);
 
