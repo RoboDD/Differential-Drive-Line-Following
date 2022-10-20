@@ -36,8 +36,8 @@ class Motors_c {
 
   // set chasis power for differential drive
   void set_chasis_power(float left_pwr_des, float right_pwr_des) {
-    left_pwr_des = (int)left_pwr_des;
-    right_pwr_des = (int)right_pwr_des;
+    // left_pwr_des = left_pwr_des;
+    // right_pwr_des = right_pwr_des;
 
     set_motor_pwm(L_PWM_PIN, L_DIR_PIN, left_pwr_des);
     set_motor_pwm(R_PWM_PIN, R_DIR_PIN, right_pwr_des);
@@ -64,7 +64,8 @@ class Motors_c {
 
     // set pwr
     if (motor_pwr < 0) {
-      analogWrite(motor_pin, -motor_pwr);
+      motor_pwr = -motor_pwr;
+      analogWrite(motor_pin, motor_pwr);
     }
     if (motor_pwr >= 0) {
       analogWrite(motor_pin, motor_pwr);
