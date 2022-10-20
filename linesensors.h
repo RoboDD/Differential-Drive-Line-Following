@@ -16,6 +16,8 @@
 #define ON_LINE true
 #define OFF_LINE false
 
+#define DEBUG_MODE true
+
 // Class to operate the linesensor(s).
 class LineSensors_c {
  public:
@@ -50,16 +52,27 @@ class LineSensors_c {
   // check in a sensor is ON_LINE or OFF_LINE
   bool check_on_line() {
     if (line_sensors_data[1] > BLACK_THRESHOLD) {
+
+      if DEBUG_MODE == true() {  
+        Serial.print("ON THE LINE!");
+      }
+      
       return ON_LINE;
     }
     if (line_sensors_data[1] < BLACK_THRESHOLD) {
+
+      if DEBUG_MODE == true() {
+        Serial.print("OFF THE LINE!");
+      }
+      
       return OFF_LINE;
     }
   }
 
   float get_norm_error() {
-    // int line_sensors_data[3] = line_sensors_data;
-    read_data();
+
+    // read_data();
+    read_data_parallel()
 
     float w_left;
     float w_right;
@@ -86,44 +99,32 @@ class LineSensors_c {
     return e_line;
   }
 
-  void read_data() {
-    // digitalRead( L_LINESENSOR_PIN );
-    // digitalRead( M_LINESENSOR_PIN );
-    // digitalRead( R_LINESENSOR_PIN );
-
-    // while( digitalRead( L_LINESENSOR_PIN ) == HIGH ) {
-    // // Do nothing, waiting for LS_LEFT_PINT to
-    // // go to LOW state.
-    // }
+  void read_data_parallel() {
 
     int remaining = NUM_OF_LINESENSOR;
-    // start_time = micros();
+
+    charge_capcitors();
+
+    // Start timing
+    start_time = micros();
 
     while (remaining > 0) {
+
       for (which = 0; which < NUM_OF_LINESENSOR; which++) {
-        dt = 0;
-        start_time = micros();
 
-        // Charge capacitor by setting input pin
-        // temporarily to output and HIGH
-        pinMode(line_sensors_pins[which], OUTPUT);
-        digitalWrite(line_sensors_pins[which], HIGH);
+        elapsed_time = micros() - start_time;
 
-        // Tiny delay for capacitor to charge.
-        delayMicroseconds(10);
+        if (digitalRead(line_sensors_pins[which]) == LOW) {
 
-        //  Turn input pin back to an input
-        pinMode(line_sensors_pins[which], INPUT);
+          if (line_sensors_data[which] == 0) {
 
-        while (digitalRead(line_sensors_pins[which]) == HIGH) {
+            line_sensors_data[which] = elapsed_time;
+            remaining = remaining - 1;
+
+          }   
+
         }
 
-        elapsed_time = micros();
-        dt = elapsed_time - start_time;
-
-        line_sensors_data[which] = dt;
-
-        remaining = remaining - 1;
       }
 
       // Here, we make a final check to see if the
@@ -140,23 +141,19 @@ class LineSensors_c {
       }
     }
 
-    // unsigned long value1 = line_sensors_data[0];
-    // unsigned long value2 = line_sensors_data[1];
-    // unsigned long value3 = line_sensors_data[2];
+    if (DEBUG_MODE == true){
+      Serial.print("LS_Left=");
+      Serial.print(line_sensors_data[0]);
+      Serial.print(",");
 
-    Serial.print("LS_Left=");
-    Serial.print(line_sensors_data[0]);
-    Serial.print(",");
+      Serial.print("LS_Middle=");
+      Serial.print(line_sensors_data[1]);
+      Serial.print(",");
 
-    Serial.print("LS_Middle=");
-    Serial.print(line_sensors_data[1]);
-    Serial.print(",");
+      Serial.print("LS_Right=");
+      Serial.println(line_sensors_data[2]);
+    }
 
-    Serial.print("LS_Right=");
-    Serial.println(line_sensors_data[2]);
-    // Serial.println("\n");
-
-    // return line_sensors_data;
   }
 
   void enable_emit() {
@@ -168,6 +165,32 @@ class LineSensors_c {
     pinMode(EMIT_PIN, OUTPUT);
     digitalWrite(EMIT_PIN, LOW);
   }
+
+
+  private:
+
+  void charge_capcitors(){
+
+    // Charge each capcitor
+    for (int which = 0; which < NUM_OF_LINESENSOR; which++) {
+
+      // Charge capacitor by setting input pin
+      // temporarily to output and HIGH
+      pinMode(line_sensors_pins[which], OUTPUT);
+      digitalWrite(line_sensors_pins[which], HIGH);
+
+      // Tiny delay for capacitor to charge.
+      delayMicroseconds(10);
+
+      //  Turn input pin back to an input
+      pinMode(line_sensors_pins[which], INPUT);
+
+      line_sensors_data[which] = 0;
+
+    }
+
+  }
+
 };
 
 #endif

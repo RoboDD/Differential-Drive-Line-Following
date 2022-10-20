@@ -7,16 +7,6 @@
 Motors_c motors;
 LineSensors_c linesensors;
 
-//!  Runs once.
-/**
- * @brief
- * todo 123
- * ! fwef
- * *erwe
- * todo
- * TODO 123
- *
- */
 void setup() {
   // Start serial, send debug text.
   Serial.begin(9600);
@@ -25,6 +15,8 @@ void setup() {
 
   motors.init();
   linesensors.init(true);
+  setupEncoder0();
+  setupEncoder1();
 }
 
 void loop() {
@@ -32,20 +24,15 @@ void loop() {
   float dir;
   float pwm;
 
-  // linesensors.read_data();
-
   dir = linesensors.get_norm_error();
 
-  pwm = 44 * dir;
+  pwm = 50 * dir;
+
 
   motors.set_chasis_power(30 + pwm, 30 - pwm);
 
-  delay(10);
+  // delay(100);
+  // delay(1000);
+  linesensors.check_on_line();
 
-  // motors.set_chasis_power(30,30);
-  // delay(1000);
-  // motors.set_chasis_power(-30, -30);
-  // delay(1000);
-  // motors.stop_motors();
-  // delay(2000);
 }
