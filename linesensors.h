@@ -52,23 +52,20 @@ class LineSensors_c {
   // check in a sensor is ON_LINE or OFF_LINE
   bool check_on_line() {
     if (line_sensors_data[1] > BLACK_THRESHOLD) {
-
-      if (DEBUG_MODE == true) {  
+      if (DEBUG_MODE == true) {
         Serial.print("ON THE LINE!");
       }
       return ON_LINE;
     }
     if (line_sensors_data[1] < BLACK_THRESHOLD) {
-
       if (DEBUG_MODE == true) {
-        Serial.print("OFF THE LINE!"); 
+        Serial.print("OFF THE LINE!");
       }
       return OFF_LINE;
     }
   }
 
   float get_norm_error() {
-
     // read_data();
     read_data_parallel();
 
@@ -98,7 +95,6 @@ class LineSensors_c {
   }
 
   void read_data_parallel() {
-
     int remaining = NUM_OF_LINESENSOR;
 
     charge_capcitors();
@@ -107,22 +103,15 @@ class LineSensors_c {
     start_time = micros();
 
     while (remaining > 0) {
-
       for (which = 0; which < NUM_OF_LINESENSOR; which++) {
-
         elapsed_time = micros() - start_time;
 
         if (digitalRead(line_sensors_pins[which]) == LOW) {
-
           if (line_sensors_data[which] == 0) {
-
             line_sensors_data[which] = elapsed_time;
             remaining = remaining - 1;
-
-          }   
-
+          }
         }
-
       }
 
       // Here, we make a final check to see if the
@@ -139,7 +128,7 @@ class LineSensors_c {
       }
     }
 
-    if (DEBUG_MODE == true){
+    if (DEBUG_MODE == true) {
       Serial.print("LS_Left=");
       Serial.print(line_sensors_data[0]);
       Serial.print(",");
@@ -151,7 +140,6 @@ class LineSensors_c {
       Serial.print("LS_Right=");
       Serial.println(line_sensors_data[2]);
     }
-
   }
 
   void enable_emit() {
@@ -164,14 +152,10 @@ class LineSensors_c {
     digitalWrite(EMIT_PIN, LOW);
   }
 
-
-  private:
-
-  void charge_capcitors(){
-
+ private:
+  void charge_capcitors() {
     // Charge each capcitor
     for (int which = 0; which < NUM_OF_LINESENSOR; which++) {
-
       // Charge capacitor by setting input pin
       // temporarily to output and HIGH
       pinMode(line_sensors_pins[which], OUTPUT);
@@ -184,11 +168,8 @@ class LineSensors_c {
       pinMode(line_sensors_pins[which], INPUT);
 
       line_sensors_data[which] = 0;
-
     }
-
   }
-
 };
 
 #endif
