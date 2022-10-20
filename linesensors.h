@@ -53,18 +53,16 @@ class LineSensors_c {
   bool check_on_line() {
     if (line_sensors_data[1] > BLACK_THRESHOLD) {
 
-      if DEBUG_MODE == true() {  
+      if (DEBUG_MODE == true) {  
         Serial.print("ON THE LINE!");
       }
-      
       return ON_LINE;
     }
     if (line_sensors_data[1] < BLACK_THRESHOLD) {
 
-      if DEBUG_MODE == true() {
-        Serial.print("OFF THE LINE!");
+      if (DEBUG_MODE == true) {
+        Serial.print("OFF THE LINE!"); 
       }
-      
       return OFF_LINE;
     }
   }
@@ -72,7 +70,7 @@ class LineSensors_c {
   float get_norm_error() {
 
     // read_data();
-    read_data_parallel()
+    read_data_parallel();
 
     float w_left;
     float w_right;

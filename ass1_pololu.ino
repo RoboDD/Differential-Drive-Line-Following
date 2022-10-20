@@ -20,19 +20,17 @@ void setup() {
 }
 
 void loop() {
-  int data[3];
+
   float dir;
   float pwm;
+  float k_p = 50;
 
   dir = linesensors.get_norm_error();
 
-  pwm = 50 * dir;
-
+  pwm = k_p * dir; //simple P-controller
 
   motors.set_chasis_power(30 + pwm, 30 - pwm);
 
-  // delay(100);
-  // delay(1000);
   linesensors.check_on_line();
 
 }
