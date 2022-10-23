@@ -6,11 +6,12 @@
 #define ENCODER_1_A_PIN 26
 // #define ENCODER_1_B_PIN Non-standard pin!
 
+#define DEBUG_MODE true
 // Volatile Global variables used by Encoder ISR.
-volatile long count_e0;  // used by encoder to count the rotation
-volatile byte state_e0;
-volatile long count_e1;
-volatile byte state_e1;
+volatile long count_right;  // used by encoder to count the rotation
+volatile byte state_right;
+volatile long count_left;
+volatile byte state_left;
 
 // This ISR handles just Encoder 0
 // ISR to read the Encoder0 Channel A and B pins
@@ -23,33 +24,39 @@ ISR(INT6_vect) {
 
   // First, Read in the new state of the encoder pins.
   // Standard pins, so standard read functions.
-  boolean e0_B = digitalRead(ENCODER_0_B_PIN);  // normal B state
-  boolean e0_A = digitalRead(ENCODER_0_A_PIN);  // XOR(AB)
+  boolean right_B = digitalRead(ENCODER_0_B_PIN);  // normal B state
+  boolean right_A = digitalRead(ENCODER_0_A_PIN);  // XOR(AB)
 
   // Software XOR (^) logically infers
   // the true value of A given the state of B
-  e0_A = e0_A ^ e0_B;
+  right_A = right_A ^ right_B;
 
   // Shift our (new) current readings into bit positions
   // 2 and 3 in the state variable (current state)
   // State: (bit3)  (bit2)  (bit1)   (bit0)
   // State:  new B   new A   old B   old A
-  state_e0 = state_e0 | (e0_B << 3);
-  state_e0 = state_e0 | (e0_A << 2);
+  state_right = state_right | (right_B << 3);
+  state_right = state_right | (right_A << 2);
 
   // Handle which transition we have registered.
   // Complete this if statement as necessary.
   // Refer to the labsheet.
-  if (state_e0 == 0) {
-  } else if (state_e0 == 1) {
-  } else if (state_e0 == 2) {
+  if (state_right == 0) {
+  } else if (state_right == 1) {
+  } else if (state_right == 2) {
   }  // Continue this if statement as necessary.
 
   // Shift the current readings (bits 3 and 2) down
   // into position 1 and 0 (to become prior readings)
   // This bumps bits 1 and 0 off to the right, "deleting"
   // them for the next ISR call.
-  state_e0 = state_e0 >> 2;
+  state_right = state_right >> 2;
+  if (DEBUG_MODE == true){
+    Serial.print("state_right: ");
+    Serial.println(state_right);
+  }
+
+  
 }
 
 // This ISR handles just Encoder 1
@@ -66,13 +73,13 @@ ISR(PCINT0_vect) {
   // composed of all 8 bits.  We want only bit 2.
   // B00000100 masks out all but bit 2
   // It is more portable to use the PINE2 keyword.
-  boolean e1_B = PINE & (1 << PINE2);
+  boolean left_B = PINE & (1 << PINE2);
   // boolean e1_B = PINE & B00000100;  // Does same as above.
 
   // Standard read from the other pin.
-  boolean e1_A = digitalRead(ENCODER_1_A_PIN);  // 26 the same as A8
+  boolean left_A = digitalRead(ENCODER_1_A_PIN);  // 26 the same as A8
 
-  e1_A = e1_A ^ e1_B;
+  left_A = left_A ^ left_B;
 
   // Create a bitwise representation of our states
   // We do this by shifting the boolean value up by
@@ -81,22 +88,27 @@ ISR(PCINT0_vect) {
   //
   // State :  (bit3)  (bit2)  (bit1)  (bit0)
   // State :  New A,  New B,  Old A,  Old B.
-  state_e1 = state_e1 | (e1_B << 3);
-  state_e1 = state_e1 | (e1_A << 2);
+  state_left = state_left | (left_B << 3);
+  state_left = state_left | (left_A << 2);
 
   // Handle which transition we have registered.
   // Complete this if statement as necessary.
   // Refer to the labsheet.
-  if (state_e1 == 0) {
-  } else if (state_e1 == 1) {
-  } else if (state_e1 == 2) {
+  if (state_left == 0) {
+  } else if (state_left == 1) {
+  } else if (state_left == 2) {
   }  // Continue this if statement as necessary.
 
   // Shift the current readings (bits 3 and 2) down
   // into position 1 and 0 (to become prior readings)
   // This bumps bits 1 and 0 off to the right, "deleting"
   // them for the next ISR call.
-  state_e1 = state_e1 >> 2;
+  state_left = state_left >> 2;
+
+  if (DEBUG_MODE == true){
+    Serial.print("state_left: ");
+    Serial.println(state_left);
+  }
 }
 
 /*
@@ -107,24 +119,24 @@ ISR(PCINT0_vect) {
    have to check the encoder manually.
 */
 void setupEncoder0() {
-  count_e0 = 0;
+  count_right = 0;
 
   // Setup pins for right encoder
   pinMode(ENCODER_0_A_PIN, INPUT);
   pinMode(ENCODER_0_B_PIN, INPUT);
 
   // initialise the recorded state of e0 encoder.
-  state_e0 = 0;
+  state_right = 0;
 
   // Get initial state of encoder pins A + B
-  boolean e0_A = digitalRead(ENCODER_0_A_PIN);
-  boolean e0_B = digitalRead(ENCODER_0_B_PIN);
-  e0_A = e0_A ^ e0_B;
+  boolean right_A = digitalRead(ENCODER_0_A_PIN);
+  boolean right_B = digitalRead(ENCODER_0_B_PIN);
+  right_A = right_A ^ right_B;
 
   // Shift values into correct place in state.
   // Bits 1 and 0  are prior states.
-  state_e0 = state_e0 | (e0_B << 1);
-  state_e0 = state_e0 | (e0_A << 0);
+  state_right = state_right | (right_B << 1);
+  state_right = state_right | (right_A << 0);
 
   // Now to set up PE6 as an external interupt (INT6), which means it can
   // have its own dedicated ISR vector INT6_vector
@@ -155,7 +167,7 @@ void setupEncoder0() {
 }
 
 void setupEncoder1() {
-  count_e1 = 0;
+  count_left = 0;
 
   // Setting up left encoder:
   // The Romi board uses the pin PE2 (port E, pin 2) which is
@@ -184,24 +196,24 @@ void setupEncoder1() {
   digitalWrite(ENCODER_1_A_PIN, HIGH);  // Encoder 1 xor
 
   // initialise the recorded state of e1 encoder.
-  state_e1 = 0;
+  state_left = 0;
 
   // Get initial state of encoder.
-  boolean e1_B = PINE & (1 << PINE2);
+  boolean left_B = PINE & (1 << PINE2);
   // boolean e1_B = PINE & B00000100;  // Does same as above.
 
   // Standard read from the other pin.
-  boolean e1_A = digitalRead(ENCODER_1_A_PIN);  // 26 the same as A8
+  boolean left_A = digitalRead(ENCODER_1_A_PIN);  // 26 the same as A8
 
   // Some clever electronics combines the
   // signals and this XOR restores the
   // true value.
-  e1_A = e1_A ^ e1_B;
+  left_A = left_A ^ left_B;
 
   // Shift values into correct place in state.
   // Bits 1 and 0  are prior states.
-  state_e1 = state_e1 | (e1_B << 1);
-  state_e1 = state_e1 | (e1_A << 0);
+  state_left = state_left | (left_B << 1);
+  state_left = state_left | (left_A << 0);
 
   // Enable pin-change interrupt on A8 (PB4) for encoder0, and disable other
   // pin-change interrupts.
