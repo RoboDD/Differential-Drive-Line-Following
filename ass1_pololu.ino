@@ -12,6 +12,7 @@
 
 Motors_c motors;
 LineSensors_c linesensors;
+Kinematics_c kinematics;
 
 unsigned long endtime = 0;
 
@@ -40,35 +41,40 @@ void setup() {
 
 void loop() {
 
+  // kinematics.update();
 
 
-  // dir = linesensors.get_line_follow_error();
-  // conor = linesensors.check_on_cornor();
-  // online = linesensors.check_on_line();
-
-  // switch(conor){
-  //   case 0:// straight
-  //     pwm = k_p * dir; //simple P-controller
-  //     motors.set_chasis_power(30 + pwm, 30 - pwm);
-  //     delay(10);
-  //     break;
-  //   case 1:// turn left
-  //     // motors.set_chasis_power(15, 15);
-  //     delay(50);
-  //     motors.set_chasis_power(-30, 30);
-  //     delay(100);
-  //     break;
-  //   case 2:// turn right
-  //     // motors.set_chasis_power(15, 15);
-  //     delay(50);
-  //     motors.set_chasis_power(30, -30);
-  //     delay(100);
-  //     break;
-  //   default:
-  //     break;
-  // }
+  do_line_follow();
 
   
-  
 
+}
+
+void do_line_follow(){
+    //Line Following
+  dir = linesensors.get_line_follow_error();
+  conor = linesensors.check_on_cornor();
+  online = linesensors.check_on_line();
+
+  switch(conor){
+    case 0:// straight
+      pwm = k_p * dir; //simple P-controller
+      motors.set_chasis_power(30 + pwm, 30 - pwm);
+      delay(10);
+      break;
+    case 1:// turn left
+      // motors.set_chasis_power(15, 15);
+      delay(50);
+      motors.set_chasis_power(-30, 30);
+      delay(100);
+      break;
+    case 2:// turn right
+      // motors.set_chasis_power(15, 15);
+      delay(50);
+      motors.set_chasis_power(30, -30);
+      delay(100);
+      break;
+    default:
+      break;
+  }
 }
