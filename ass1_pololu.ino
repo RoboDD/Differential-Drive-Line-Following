@@ -36,13 +36,16 @@ void setup() {
   setupEncoder0();
   setupEncoder1();
 
+  // init task
   current_task = TASK_INIT;
 }
 
 void loop() {
 
   // kinematics.update();
-  conor = linesensors.check_on_cornor();
+  
+  online = linesensors.check_on_line();
+
 
   do_line_follow();
 
@@ -54,12 +57,12 @@ void loop() {
 //Line Following
 void do_line_follow(){
   
-  dir = linesensors.get_line_follow_error();
-  online = linesensors.check_on_line();
-
+  error_line = linesensors.get_line_follow_error();
+  conor = linesensors.check_on_cornor();
+  
   switch(conor){
     case 0:// straight
-      pwm = k_p * dir; //simple P-controller
+      pwm = k_p * error_line; //simple P-controller
       motors.set_chasis_power(30 + pwm, 30 - pwm);
       delay(10);
       break;

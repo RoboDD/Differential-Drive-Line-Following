@@ -3,7 +3,7 @@
 // once by the compiler.
 #ifndef _KINEMATICS_H
 #define _KINEMATICS_H
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 
 // Class to track robot position.
 class Kinematics_c {

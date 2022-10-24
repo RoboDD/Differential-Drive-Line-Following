@@ -25,7 +25,7 @@
 // #define L_CORNOR 1
 // #define R_CORNOR 2
 
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 
 // Class to operate the linesensor(s).
 class LineSensors_c {
