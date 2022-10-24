@@ -19,6 +19,8 @@
 #define ON_LINE true
 #define OFF_LINE false
 
+#define E_LINE_OFFSET 0.03
+
 // #define NO_CORNOR 0
 // #define L_CORNOR 1
 // #define R_CORNOR 2
@@ -132,7 +134,7 @@ public:
     w_left = line_sensors_data_norm[0] + (line_sensors_data_norm[1] * 0.5);
     w_right = line_sensors_data_norm[2] + (line_sensors_data_norm[1] * 0.5);
 
-    e_line = w_left - w_right;
+    e_line = w_left - w_right + E_LINE_OFFSET;
 
     if (DEBUG_MODE == true) {
       Serial.print("Normalised error signal=");

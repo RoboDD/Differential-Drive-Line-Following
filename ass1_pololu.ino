@@ -42,7 +42,7 @@ void setup() {
 void loop() {
 
   // kinematics.update();
-
+  conor = linesensors.check_on_cornor();
 
   do_line_follow();
 
@@ -50,10 +50,11 @@ void loop() {
 
 }
 
+
+//Line Following
 void do_line_follow(){
-    //Line Following
+  
   dir = linesensors.get_line_follow_error();
-  conor = linesensors.check_on_cornor();
   online = linesensors.check_on_line();
 
   switch(conor){
@@ -68,6 +69,11 @@ void do_line_follow(){
       delay(100);
       break;
     case 2:// turn right
+      delay(50);
+      motors.set_chasis_power(30, -30);
+      delay(100);
+      break;
+    case 3:// at T-shape, ture right first
       delay(50);
       motors.set_chasis_power(30, -30);
       delay(100);
