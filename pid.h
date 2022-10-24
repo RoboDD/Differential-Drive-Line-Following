@@ -30,7 +30,7 @@ class PID_c {
 
     error = value_des - value_cur;
     error_derivative = error / time_duration;
-    error_integral = error;
+    error_integral += error;
 
     pid_out = K_P * error + K_I * error_integral + K_D * error_derivative;
 

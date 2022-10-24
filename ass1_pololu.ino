@@ -18,7 +18,7 @@ unsigned long endtime = 0;
 
 int OFFLINE_COUNT = 0;
 
-float dir;
+float error_line;
 float pwm;
 float k_p = 50;
 int conor;
@@ -26,13 +26,19 @@ bool online;
 int current_task;
 
 void setup() {
+
   // Start serial, send debug text.
   Serial.begin(9600);
   delay(1000);
   Serial.println("***RESET***");
 
+  // init motors
   motors.init();
+
+  //init line sensors
   linesensors.init(true);
+
+  // init encoders
   setupEncoder0();
   setupEncoder1();
 
@@ -43,11 +49,20 @@ void setup() {
 void loop() {
 
   // kinematics.update();
-  
+
   online = linesensors.check_on_line();
 
-
   do_line_follow();
+
+  // stupid logic to stop car
+  if (count_left > 1750){ // 20cm,168
+    if (online == false) {
+      motors.stop_motors();
+      delay(10000);
+    }
+  }
+  
+  // Serial.println(current_task);
 
   
 
@@ -66,12 +81,12 @@ void do_line_follow(){
       motors.set_chasis_power(30 + pwm, 30 - pwm);
       delay(10);
       break;
-    case 1:// turn left
+    case 1:// 90 degree, turn left
       delay(50);
       motors.set_chasis_power(-30, 30);
       delay(100);
       break;
-    case 2:// turn right
+    case 2:// 90 degree, turn right
       delay(50);
       motors.set_chasis_power(30, -30);
       delay(100);

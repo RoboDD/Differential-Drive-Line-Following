@@ -6,7 +6,7 @@
 #define ENCODER_1_A_PIN 26
 // #define ENCODER_1_B_PIN Non-standard pin!
 
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 // Volatile Global variables used by Encoder ISR.
 volatile long count_right;  // used by encoder to count the rotation
 volatile byte state_right;
