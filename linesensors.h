@@ -23,7 +23,7 @@
 // #define L_CORNOR 1
 // #define R_CORNOR 2
 
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 
 // Class to operate the linesensor(s).
 class LineSensors_c {
@@ -130,9 +130,12 @@ public:
 
     e_line = w_left - w_right;
 
-    Serial.print("Normalised error signal=");
-    Serial.print(e_line);
-    Serial.print("!");
+    if (DEBUG_MODE == true) {
+      Serial.print("Normalised error signal=");
+      Serial.print(e_line);
+      Serial.print("!");
+    }
+
 
     return e_line;
   }
@@ -173,21 +176,19 @@ public:
     }
 
     if (DEBUG_MODE == true) {
-      Serial.print("LS_Left=");
+      Serial.print("LS_0=");
       Serial.print(line_sensors_data[0]);
       Serial.print(",");
-
-      Serial.print("LS_Middle=");
+      Serial.print("LS_1=");
       Serial.print(line_sensors_data[1]);
       Serial.print(",");
-
-      Serial.print("LS_Right=");
+      Serial.print("LS_2=");
       Serial.print(line_sensors_data[2]);
-
-      Serial.print("LS_Left_rear=");
+      Serial.print(",");
+      Serial.print("LS_3=");
       Serial.print(line_sensors_data[3]);
-
-      Serial.print("LS_Right_rear=");
+      Serial.print(",");
+      Serial.print("LS_4=");
       Serial.println(line_sensors_data[4]);
     }
   }

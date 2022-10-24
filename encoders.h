@@ -6,7 +6,7 @@
 #define ENCODER_1_A_PIN 26
 // #define ENCODER_1_B_PIN Non-standard pin!
 
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 // Volatile Global variables used by Encoder ISR.
 volatile long count_right;  // used by encoder to count the rotation
 volatile byte state_right;
@@ -58,7 +58,7 @@ ISR(INT6_vect) {
   state_right = state_right >> 2;
   if (DEBUG_MODE == true){
     Serial.print("state_right: ");
-    Serial.println(state_right);
+    Serial.print(state_right);
     Serial.print("count_right: ");
     Serial.println(count_right);
   }
@@ -116,7 +116,7 @@ ISR(PCINT0_vect) {
 
   if (DEBUG_MODE == true){
     Serial.print("state_left: ");
-    Serial.println(state_left);
+    Serial.print(state_left);
     Serial.print("count_left: ");
     Serial.println(count_left);
   }
