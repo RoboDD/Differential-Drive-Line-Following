@@ -23,7 +23,7 @@
 // #define L_CORNOR 1
 // #define R_CORNOR 2
 
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 
 // Class to operate the linesensor(s).
 class LineSensors_c {
@@ -76,27 +76,31 @@ public:
 
   // check 90 degree cornor using line sensor on most left and most right
   int check_on_cornor() {
-    if (line_sensors_data[3] > BLACK_THRESHOLD) {
+    if (line_sensors_data[3] > BLACK_THRESHOLD && line_sensors_data[4] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("LEFT 90 CORNOR!");
       }
-      // int result = 1;
       return 1;
     }
 
-    if (line_sensors_data[4] > BLACK_THRESHOLD) {
+    if (line_sensors_data[4] > BLACK_THRESHOLD && line_sensors_data[3] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("RIGHT 90 CORNOR!");
       }
-      // int result = 2;
       return 2;
+    }
+
+    if (line_sensors_data[4] > BLACK_THRESHOLD && line_sensors_data[3] > BLACK_THRESHOLD) {
+      if (DEBUG_MODE == true) {
+        Serial.print("ON T-shape CORNOR!");
+      }
+      return 3;
     }
 
     if (line_sensors_data[3] < BLACK_THRESHOLD && line_sensors_data[4] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("NO CORNOR!");        
-      }
-      // int result = 0;                         
+      }                      
       return 0;
       
     }

@@ -63,13 +63,11 @@ void do_line_follow(){
       delay(10);
       break;
     case 1:// turn left
-      // motors.set_chasis_power(15, 15);
       delay(50);
       motors.set_chasis_power(-30, 30);
       delay(100);
       break;
     case 2:// turn right
-      // motors.set_chasis_power(15, 15);
       delay(50);
       motors.set_chasis_power(30, -30);
       delay(100);
