@@ -12,6 +12,8 @@
 #define R_LINESENSOR_PIN A3
 #define RR_LINESENSOR_PIN A4 // right-rear
 
+#define BUZZ_PIN 6
+
 #define EMIT_PIN 11
 #define NUM_OF_LINESENSOR 5
 #define BLACK_THRESHOLD 1400
@@ -71,6 +73,7 @@ public:
       if (DEBUG_MODE == true) {
         Serial.print("OFF THE LINE!");
       }
+      // beep();
       return OFF_LINE;
     }
   }
@@ -82,6 +85,7 @@ public:
       if (DEBUG_MODE == true) {
         Serial.print("LEFT 90 CORNOR!");
       }
+      // beep();
       return 1;
     }
 
@@ -89,6 +93,7 @@ public:
       if (DEBUG_MODE == true) {
         Serial.print("RIGHT 90 CORNOR!");
       }
+      // beep();
       return 2;
     }
 
@@ -96,6 +101,7 @@ public:
       if (DEBUG_MODE == true) {
         Serial.print("ON T-shape CORNOR!");
       }
+      // beep();
       return 3;
     }
 
@@ -227,6 +233,16 @@ private:
       line_sensors_data[which] = 0;
     }
   }
+
+  void beep(){
+    for(int i=0;i<100;i++){
+      digitalWrite(BUZZ_PIN, HIGH);
+      delayMicroseconds(500);
+      digitalWrite(BUZZ_PIN, LOW);
+      delayMicroseconds(500);
+    }
+
+}
 };
 
 #endif
