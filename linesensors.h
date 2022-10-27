@@ -69,7 +69,7 @@ public:
       }
       return ON_LINE;
     }
-    if (line_sensors_data[1] < BLACK_THRESHOLD) {
+    if (line_sensors_data[0] < BLACK_THRESHOLD && line_sensors_data[1] < BLACK_THRESHOLD && line_sensors_data[2] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("OFF THE LINE!");
       }
