@@ -7,7 +7,7 @@
 
 // Class to track robot position.
 class Kinematics_c {
-public:
+ public:
   int last_count_left;
   int last_count_right;
   unsigned long start_time;
@@ -18,12 +18,9 @@ public:
   // Constructor, must exist.
   Kinematics_c() {}
 
-
-
   // Use this function to update
   // your kinematics
   void update() {
-
     start_time = micros();
     last_count_left = count_left;
     last_count_right = count_right;
@@ -35,17 +32,12 @@ public:
     omega_left = last_count_left / duration;
     omega_right = last_count_right / duration;
 
-    if (DEBUG_MODE == true){
+    if (DEBUG_MODE == true) {
       Serial.print("L-omega: ");
       Serial.print(omega_left);
       Serial.print("R-omega: ");
       Serial.println(omega_right);
-
     }
-    
-
-
-
   }
 };
 

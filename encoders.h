@@ -43,11 +43,10 @@ ISR(INT6_vect) {
   // Refer to the labsheet.
   if (state_right == 0) {
   } else if (state_right == 1) {
-    count_right = count_right -1;   // backwards
-    
+    count_right = count_right - 1;  // backwards
+
   } else if (state_right == 2) {
     count_right = count_right + 1;  // forwards
-    
 
   }  // Continue this if statement as necessary.
 
@@ -56,14 +55,12 @@ ISR(INT6_vect) {
   // This bumps bits 1 and 0 off to the right, "deleting"
   // them for the next ISR call.
   state_right = state_right >> 2;
-  if (DEBUG_MODE == true){
+  if (DEBUG_MODE == true) {
     Serial.print("state_right: ");
     Serial.print(state_right);
     Serial.print("count_right: ");
     Serial.println(count_right);
   }
-
-  
 }
 
 // This ISR handles just Encoder 1
@@ -103,10 +100,10 @@ ISR(PCINT0_vect) {
   // Refer to the labsheet.
   if (state_left == 0) {
   } else if (state_left == 1) {
-    count_left = count_left -1;   // backwards
+    count_left = count_left - 1;  // backwards
   } else if (state_left == 2) {
-    count_left = count_left +1;   // forewards
-  }  // Continue this if statement as necessary.
+    count_left = count_left + 1;  // forewards
+  }                               // Continue this if statement as necessary.
 
   // Shift the current readings (bits 3 and 2) down
   // into position 1 and 0 (to become prior readings)
@@ -114,7 +111,7 @@ ISR(PCINT0_vect) {
   // them for the next ISR call.
   state_left = state_left >> 2;
 
-  if (DEBUG_MODE == true){
+  if (DEBUG_MODE == true) {
     Serial.print("state_left: ");
     Serial.print(state_left);
     Serial.print("count_left: ");

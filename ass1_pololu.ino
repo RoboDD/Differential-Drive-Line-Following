@@ -29,8 +29,8 @@ float k_p = 50;
 int conor;
 bool online;
 int current_task;
-int map_choice; //1 for left, 2 for right
-
+int map_choice;  // 1 for left, 2 for right
+ 
 void setup() {
   // init task
   current_task = TASK_INIT;
@@ -44,7 +44,7 @@ void setup() {
   pinMode(BUZZ_PIN, OUTPUT);
   digitalWrite(BUZZ_PIN, LOW);
 
-  //LED
+  // LED
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(YELLOW_LED_PIN, OUTPUT);
   digitalWrite(RED_LED_PIN, LOW);
@@ -52,7 +52,7 @@ void setup() {
   // init motors
   motors.init();
 
-  //init line sensors
+  // init line sensors
   linesensors.init(true);
 
   // init encoders
@@ -60,22 +60,17 @@ void setup() {
   setupEncoder1();
 
   // finish all init
-  current_task += 1; // go to task 2 "folow line"
+  current_task += 1;  // go to task 2 "folow line"
   map_choice = 1;
   beep();
-  
 }
 
 void loop() {
-  
   // beep();
   // delay(2000);
   online = linesensors.check_on_line();
 
-
-
-
-  switch(current_task){
+  switch (current_task) {
     case TASK_INIT:
       Serial.println("System is initialing!");
       break;
@@ -87,58 +82,60 @@ void loop() {
       break;
     case TASK_REACH_END:
       do_stop_and_wait();
-      current_task +=1;
+      current_task += 1;
       break;
     case TASK_RETURN_HOME:
       if (map_choice == 1) {
         delay(50);
         motors.set_chasis_power(-30, 30);
-        delay(500);
-        motors.set_chasis_power(30, 30);
-        delay(10000);
-        current_task +=1;
+        delay(485);
+        motors.set_chasis_power(40, 40);
+        delay(6600);
+        current_task += 1;
       }
       if (map_choice == 2) {
-
+        delay(50);
+        motors.set_chasis_power(30, -30);
+        delay(600);
+        motors.set_chasis_power(40, 40);
+        delay(6600);
+        current_task += 1;
       }
 
       break;
     case TASK_STOP_AT_HOME:
       do_stop_and_wait();
+      delay(100000);
       break;
     default:
       break;
   }
-  
 
   Serial.println(map_choice);
-
 }
 
-
-//Line Following
-void do_line_follow(){
-  
+// Line Following
+void do_line_follow() {
   error_line = linesensors.get_line_follow_error();
   conor = linesensors.check_on_cornor();
-  
-  switch(conor){
-    case 0:// straight
-      pwm = k_p * error_line; //simple P-controller
+
+  switch (conor) {
+    case 0:                    // straight
+      pwm = k_p * error_line;  // simple P-controller
       motors.set_chasis_power(30 + pwm, 30 - pwm);
       delay(10);
       break;
-    case 1:// 90 degree, turn left
+    case 1:  // 90 degree, turn left
       delay(50);
       motors.set_chasis_power(-30, 30);
       delay(100);
       break;
-    case 2:// 90 degree, turn right
+    case 2:  // 90 degree, turn right
       delay(50);
       motors.set_chasis_power(30, -30);
       delay(100);
       break;
-    case 3:// at T-shape, ture right first
+    case 3:  // at T-shape, ture right first
       delay(50);
       motors.set_chasis_power(30, -30);
       delay(100);
@@ -148,38 +145,38 @@ void do_line_follow(){
   }
 }
 
-void check_map_status(){
-    //check map
-  if (online == false && count_left > 250 && count_left < 280){
-      beep();
-      delay(50);
-      motors.set_chasis_power(-30, 30);
-      delay(1000);
-      map_choice = 2;  
+void check_map_status() {
+  // check map
+  if (online == false && count_left > 250 && count_left < 280) {
+    beep();
+    delay(50);
+    motors.set_chasis_power(-30, 30);
+    delay(1000);
+    map_choice = 2;
   }
 }
-void check_condition_to_stop(){
-    // stupid logic to stop car
-  if (map_choice == 1 && count_left > 1750){ // 20cm,168
+void check_condition_to_stop() {
+  // stupid logic to stop car
+  if (map_choice == 1 && count_left > 1750) {  // 20cm,168
     if (online == false) {
       current_task = TASK_REACH_END;
     }
   }
   // stupid logic to stop car
-  if (map_choice == 2 && count_right > 1880){ // 20cm,168
+  if (map_choice == 2 && count_right > 1880) {  // 20cm,168
     if (online == false) {
       current_task = TASK_REACH_END;
     }
   }
 }
-void do_stop_and_wait(){
+void do_stop_and_wait() {
   motors.stop_motors();
   beep();
-  delay(30000);
+  delay(2000);
 }
 
-void show_map_status(){
-  if (1 == map_choice){
+void show_map_status() {
+  if (1 == map_choice) {
     digitalWrite(YELLOW_LED_PIN, LOW);
     digitalWrite(RED_LED_PIN, HIGH);
     delay(10);
@@ -190,17 +187,14 @@ void show_map_status(){
     digitalWrite(YELLOW_LED_PIN, HIGH);
     delay(10);
     digitalWrite(YELLOW_LED_PIN, LOW);
-    
   }
 }
 
-void beep(){
-    for(int i=0;i<100;i++){
-      digitalWrite(BUZZ_PIN, HIGH);
-      delayMicroseconds(500);
-      digitalWrite(BUZZ_PIN, LOW);
-      delayMicroseconds(500);
-    }
-
+void beep() {
+  for (int i = 0; i < 100; i++) {
+    digitalWrite(BUZZ_PIN, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(BUZZ_PIN, LOW);
+    delayMicroseconds(500);
+  }
 }
-

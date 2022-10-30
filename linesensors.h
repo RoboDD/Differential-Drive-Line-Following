@@ -6,11 +6,11 @@
 
 // define pin of left, middle and right line sensors
 
-#define LR_LINESENSOR_PIN 12 // left-rear
+#define LR_LINESENSOR_PIN 12  // left-rear
 #define L_LINESENSOR_PIN A0
 #define M_LINESENSOR_PIN A2
 #define R_LINESENSOR_PIN A3
-#define RR_LINESENSOR_PIN A4 // right-rear
+#define RR_LINESENSOR_PIN A4  // right-rear
 
 #define BUZZ_PIN 6
 
@@ -31,10 +31,10 @@
 
 // Class to operate the linesensor(s).
 class LineSensors_c {
-public:
-  int line_sensors_pins[NUM_OF_LINESENSOR] = { L_LINESENSOR_PIN, M_LINESENSOR_PIN,
-                               R_LINESENSOR_PIN, LR_LINESENSOR_PIN,
-                               RR_LINESENSOR_PIN };
+ public:
+  int line_sensors_pins[NUM_OF_LINESENSOR] = {
+      L_LINESENSOR_PIN, M_LINESENSOR_PIN, R_LINESENSOR_PIN, LR_LINESENSOR_PIN,
+      RR_LINESENSOR_PIN};
   int line_sensors_data[NUM_OF_LINESENSOR];
 
   float line_sensors_data_norm[NUM_OF_LINESENSOR];
@@ -69,7 +69,9 @@ public:
       }
       return ON_LINE;
     }
-    if (line_sensors_data[0] < BLACK_THRESHOLD && line_sensors_data[1] < BLACK_THRESHOLD && line_sensors_data[2] < BLACK_THRESHOLD) {
+    if (line_sensors_data[0] < BLACK_THRESHOLD &&
+        line_sensors_data[1] < BLACK_THRESHOLD &&
+        line_sensors_data[2] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("OFF THE LINE!");
       }
@@ -78,10 +80,10 @@ public:
     }
   }
 
-
   // check 90 degree cornor using line sensor on most left and most right
   int check_on_cornor() {
-    if (line_sensors_data[3] > BLACK_THRESHOLD && line_sensors_data[4] < BLACK_THRESHOLD) {
+    if (line_sensors_data[3] > BLACK_THRESHOLD &&
+        line_sensors_data[4] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("LEFT 90 CORNOR!");
       }
@@ -89,7 +91,8 @@ public:
       return 1;
     }
 
-    if (line_sensors_data[4] > BLACK_THRESHOLD && line_sensors_data[3] < BLACK_THRESHOLD) {
+    if (line_sensors_data[4] > BLACK_THRESHOLD &&
+        line_sensors_data[3] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("RIGHT 90 CORNOR!");
       }
@@ -97,7 +100,8 @@ public:
       return 2;
     }
 
-    if (line_sensors_data[4] > BLACK_THRESHOLD && line_sensors_data[3] > BLACK_THRESHOLD) {
+    if (line_sensors_data[4] > BLACK_THRESHOLD &&
+        line_sensors_data[3] > BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
         Serial.print("ON T-shape CORNOR!");
       }
@@ -105,20 +109,14 @@ public:
       return 3;
     }
 
-    if (line_sensors_data[3] < BLACK_THRESHOLD && line_sensors_data[4] < BLACK_THRESHOLD) {
+    if (line_sensors_data[3] < BLACK_THRESHOLD &&
+        line_sensors_data[4] < BLACK_THRESHOLD) {
       if (DEBUG_MODE == true) {
-        Serial.print("NO CORNOR!");        
-      }                      
+        Serial.print("NO CORNOR!");
+      }
       return 0;
-      
     }
-    
-
-    
-
   }
-
-
 
   float get_line_follow_error() {
     // read_data();
@@ -148,7 +146,6 @@ public:
       Serial.print("!");
     }
 
-
     return e_line;
   }
 
@@ -163,7 +160,7 @@ public:
     while (remaining > 0) {
       for (which = 0; which < NUM_OF_LINESENSOR; which++) {
         elapsed_time = micros() - start_time;
-      
+
         // wait the capacitor to decay
         if (digitalRead(line_sensors_pins[which]) == LOW) {
           if (line_sensors_data[which] == 0) {
@@ -215,7 +212,7 @@ public:
     digitalWrite(EMIT_PIN, LOW);
   }
 
-private:
+ private:
   void charge_capcitors() {
     // Charge each capcitor
     for (int which = 0; which < NUM_OF_LINESENSOR; which++) {
@@ -234,15 +231,14 @@ private:
     }
   }
 
-  void beep(){
-    for(int i=0;i<100;i++){
+  void beep() {
+    for (int i = 0; i < 100; i++) {
       digitalWrite(BUZZ_PIN, HIGH);
       delayMicroseconds(500);
       digitalWrite(BUZZ_PIN, LOW);
       delayMicroseconds(500);
     }
-
-}
+  }
 };
 
 #endif
