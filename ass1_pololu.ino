@@ -66,52 +66,55 @@ void setup() {
 }
 
 void loop() {
-  // beep();
-  // delay(2000);
-  online = linesensors.check_on_line();
 
-  switch (current_task) {
-    case TASK_INIT:
-      Serial.println("System is initialing!");
-      break;
-    case TASK_FOLLOW_LINE:
-      do_line_follow();
-      check_map_status();
-      check_condition_to_stop();
-      show_map_status();
-      break;
-    case TASK_REACH_END:
-      do_stop_and_wait();
-      current_task += 1;
-      break;
-    case TASK_RETURN_HOME:
-      if (map_choice == 1) {
-        delay(50);
-        motors.set_chasis_power(-30, 30);
-        delay(485);
-        motors.set_chasis_power(40, 40);
-        delay(6600);
-        current_task += 1;
-      }
-      if (map_choice == 2) {
-        delay(50);
-        motors.set_chasis_power(30, -30);
-        delay(600);
-        motors.set_chasis_power(40, 40);
-        delay(6600);
-        current_task += 1;
-      }
+  // online = linesensors.check_on_line();
 
-      break;
-    case TASK_STOP_AT_HOME:
-      do_stop_and_wait();
-      delay(100000);
-      break;
-    default:
-      break;
-  }
+  // switch (current_task) {
+  //   case TASK_INIT:
+  //     Serial.println("System is initialing!");
+  //     break;
+  //   case TASK_FOLLOW_LINE:
+  //     do_line_follow();
+  //     check_map_status();
+  //     check_condition_to_stop();
+  //     show_map_status();
+  //     break;
+  //   case TASK_REACH_END:
+  //     do_stop_and_wait();
+  //     current_task += 1;
+  //     break;
+  //   case TASK_RETURN_HOME:
+  //     if (map_choice == 1) {
+  //       delay(50);
+  //       motors.set_chasis_power(-30, 30);
+  //       delay(485);
+  //       motors.set_chasis_power(40, 40);
+  //       delay(6600);
+  //       current_task += 1;
+  //     }
+  //     if (map_choice == 2) {
+  //       delay(50);
+  //       motors.set_chasis_power(30, -30);
+  //       delay(600);
+  //       motors.set_chasis_power(40, 40);
+  //       delay(6600);
+  //       current_task += 1;
+  //     }
 
-  Serial.println(map_choice);
+  //     break;
+  //   case TASK_STOP_AT_HOME:
+  //     do_stop_and_wait();
+  //     delay(100000);
+  //     break;
+  //   default:
+  //     break;
+  // }
+
+  motors.set_chasis_power(60, 0);
+  get_right_wheel_speed();
+  // Serial.println(map_choice);
+
+  motors.set_chasis_power(-60, 0);
 }
 
 // Line Following
@@ -198,3 +201,46 @@ void beep() {
     delayMicroseconds(500);
   }
 }
+
+void get_right_wheel_speed(){
+    // long newposition;
+    // long oldposition;
+    // long vel;
+    // unsigned long newtime;
+    // unsigned long oldtime;
+
+    // delay(100);
+    // newposition = count_right;
+    // newtime = millis();
+    
+    // vel = (newposition-oldposition) /1000*(newtime-oldtime);
+    // Serial.print ("speed = ");
+    // Serial.println (vel);
+    // oldposition = count_right;
+    // oldtime = newtime;
+    
+
+    double last_count = count_right;
+    unsigned long start_time = millis();
+
+    delay(20);
+
+    unsigned long end_time = millis();    
+    unsigned long delta_t = end_time - start_time;
+    double count_diff = last_count - count_right;
+    double speed = 100*count_diff / delta_t;
+
+ 
+    Serial.print("speed: ");
+    Serial.print(speed);   
+    Serial.print("delta_t: ");
+    Serial.print(delta_t); 
+    Serial.print("last_count: ");
+    Serial.print(last_count);
+    Serial.print("count_right: ");
+    Serial.println(count_right);
+}
+
+
+
+
