@@ -30,7 +30,19 @@ int conor;
 bool online;
 int current_task;
 int map_choice;  // 1 for left, 2 for right
- 
+
+// Task scheduler parameter
+unsigned long prev_time_line_sensor = millis();
+unsigned long prev_time_encoder = millis();
+unsigned long prev_time_heading_control = millis();
+unsigned long prev_time_motor_speed_control = millis();
+
+unsigned long interval_line_sensor = 10; // 50 Hz for read linesensor data
+unsigned long interval_encoder = 10; // 50 Hz for read linesensor data
+unsigned long interval_heading_control = 50; // 20 Hz for heading controller
+unsigned long interval_motor_speed_control = 10; // 100 Hz for motor speed controller
+
+
 void setup() {
   // init task
   current_task = TASK_INIT;
@@ -109,12 +121,50 @@ void loop() {
   //   default:
   //     break;
   // }
-
-  motors.set_chasis_power(60, 0);
-  get_right_wheel_speed();
   // Serial.println(map_choice);
 
-  motors.set_chasis_power(-60, 0);
+  unsigned long current_time = millis();
+
+  // Task 1: Read line sensor data
+  if (current_time - prev_time_line_sensor > interval_line_sensor){
+
+    // start task 1
+    error_line = linesensors.get_line_follow_error();
+    conor = linesensors.check_on_cornor();
+    // end task 1
+
+    prev_time_line_sensor = current_time;
+  }
+
+  // Task 2: Read encoder data
+  if (current_time - prev_time_encoder > interval_encoder){
+
+    get_right_wheel_speed();
+
+    prev_time_encoder = current_time;
+  }
+
+  // Task 3: heading controller
+  if (current_time - prev_time_heading_control > interval_heading_control){
+
+
+    prev_time_heading_control = current_time;
+  }
+
+  // Task 4: set motor pwm
+  if (current_time - prev_time_motor_speed_control > interval_motor_speed_control){
+
+    // start task 4
+    pwm = k_p * error_line;  // simple P-controller
+    motors.set_chasis_power(30, 30);
+    motors.set_chasis_power(30 + pwm, 30 - pwm);
+    // end task 4
+
+    prev_time_motor_speed_control = current_time;
+  }
+
+  
+
 }
 
 // Line Following
@@ -203,27 +253,11 @@ void beep() {
 }
 
 void get_right_wheel_speed(){
-    // long newposition;
-    // long oldposition;
-    // long vel;
-    // unsigned long newtime;
-    // unsigned long oldtime;
-
-    // delay(100);
-    // newposition = count_right;
-    // newtime = millis();
-    
-    // vel = (newposition-oldposition) /1000*(newtime-oldtime);
-    // Serial.print ("speed = ");
-    // Serial.println (vel);
-    // oldposition = count_right;
-    // oldtime = newtime;
-    
 
     double last_count = count_right;
     unsigned long start_time = millis();
 
-    delay(20);
+    delay(10);
 
     unsigned long end_time = millis();    
     unsigned long delta_t = end_time - start_time;
@@ -231,14 +265,14 @@ void get_right_wheel_speed(){
     double speed = 100*count_diff / delta_t;
 
  
-    Serial.print("speed: ");
-    Serial.print(speed);   
-    Serial.print("delta_t: ");
-    Serial.print(delta_t); 
-    Serial.print("last_count: ");
-    Serial.print(last_count);
-    Serial.print("count_right: ");
-    Serial.println(count_right);
+    // Serial.print("speed: ");
+    // Serial.print(speed);   
+    // Serial.print("delta_t: ");
+    // Serial.print(delta_t); 
+    // Serial.print("last_count: ");
+    // Serial.print(last_count);
+    // Serial.print("count_right: ");
+    // Serial.println(count_right);
 }
 
 
