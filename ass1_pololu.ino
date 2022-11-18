@@ -79,50 +79,6 @@ void setup() {
 
 void loop() {
 
-  // online = linesensors.check_on_line();
-
-  // switch (current_task) {
-  //   case TASK_INIT:
-  //     Serial.println("System is initialing!");
-  //     break;
-  //   case TASK_FOLLOW_LINE:
-  //     do_line_follow();
-  //     check_map_status();
-  //     check_condition_to_stop();
-  //     show_map_status();
-  //     break;
-  //   case TASK_REACH_END:
-  //     do_stop_and_wait();
-  //     current_task += 1;
-  //     break;
-  //   case TASK_RETURN_HOME:
-  //     if (map_choice == 1) {
-  //       delay(50);
-  //       motors.set_chasis_power(-30, 30);
-  //       delay(485);
-  //       motors.set_chasis_power(40, 40);
-  //       delay(6600);
-  //       current_task += 1;
-  //     }
-  //     if (map_choice == 2) {
-  //       delay(50);
-  //       motors.set_chasis_power(30, -30);
-  //       delay(600);
-  //       motors.set_chasis_power(40, 40);
-  //       delay(6600);
-  //       current_task += 1;
-  //     }
-
-  //     break;
-  //   case TASK_STOP_AT_HOME:
-  //     do_stop_and_wait();
-  //     delay(100000);
-  //     break;
-  //   default:
-  //     break;
-  // }
-  // Serial.println(map_choice);
-
   unsigned long current_time = millis();
 
   // Task 1: Read line sensor data
@@ -155,22 +111,21 @@ void loop() {
   if (current_time - prev_time_motor_speed_control > interval_motor_speed_control){
 
     // start task 4
-    pwm = k_p * error_line;  // simple P-controller
-    motors.set_chasis_power(30, 30);
-    motors.set_chasis_power(30 + pwm, 30 - pwm);
+    // pwm = k_p * error_line;  // simple P-controller
+    // motors.set_chasis_power(30, 30);
+    // motors.set_chasis_power(30 + pwm, 30 - pwm);
+    do_line_follow();
     // end task 4
 
     prev_time_motor_speed_control = current_time;
   }
 
-  
-
 }
 
 // Line Following
 void do_line_follow() {
-  error_line = linesensors.get_line_follow_error();
-  conor = linesensors.check_on_cornor();
+  // error_line = linesensors.get_line_follow_error();
+  // conor = linesensors.check_on_cornor();
 
   switch (conor) {
     case 0:                    // straight
@@ -198,50 +153,14 @@ void do_line_follow() {
   }
 }
 
-void check_map_status() {
-  // check map
-  if (online == false && count_left > 250 && count_left < 280) {
-    beep();
-    delay(50);
-    motors.set_chasis_power(-30, 30);
-    delay(1000);
-    map_choice = 2;
-  }
-}
-void check_condition_to_stop() {
-  // stupid logic to stop car
-  if (map_choice == 1 && count_left > 1750) {  // 20cm,168
-    if (online == false) {
-      current_task = TASK_REACH_END;
-    }
-  }
-  // stupid logic to stop car
-  if (map_choice == 2 && count_right > 1880) {  // 20cm,168
-    if (online == false) {
-      current_task = TASK_REACH_END;
-    }
-  }
-}
+
+
 void do_stop_and_wait() {
   motors.stop_motors();
   beep();
-  delay(2000);
+  delay(20000);
 }
 
-void show_map_status() {
-  if (1 == map_choice) {
-    digitalWrite(YELLOW_LED_PIN, LOW);
-    digitalWrite(RED_LED_PIN, HIGH);
-    delay(10);
-    digitalWrite(RED_LED_PIN, LOW);
-  }
-  if (2 == map_choice) {
-    digitalWrite(RED_LED_PIN, LOW);
-    digitalWrite(YELLOW_LED_PIN, HIGH);
-    delay(10);
-    digitalWrite(YELLOW_LED_PIN, LOW);
-  }
-}
 
 void beep() {
   for (int i = 0; i < 100; i++) {
