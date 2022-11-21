@@ -19,6 +19,7 @@ Version description:
     * 135 degree cornor
     * Finite-state-machine (FSM)
     * utility driver: beep and led
+    * auto map selection
 * V3.0: Achieved line following challenge, eared 95% marks for assessment 1 [[video]](https://www.youtube.com/watch?v=ppUrGDie5EU&ab_channel=RoboDDai)
     * encoder driver
     * join the line at 90 degree
