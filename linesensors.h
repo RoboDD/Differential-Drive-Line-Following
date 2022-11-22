@@ -5,16 +5,14 @@
 #define _LINESENSOR_H
 
 // define pin of left, middle and right line sensors
-
 #define LR_LINESENSOR_PIN 12  // left-rear
 #define L_LINESENSOR_PIN A0
 #define M_LINESENSOR_PIN A2
 #define R_LINESENSOR_PIN A3
 #define RR_LINESENSOR_PIN A4  // right-rear
-
 #define BUZZ_PIN 6
-
 #define EMIT_PIN 11
+
 #define NUM_OF_LINESENSOR 5
 #define BLACK_THRESHOLD 1400
 
@@ -22,10 +20,6 @@
 #define OFF_LINE false
 
 #define E_LINE_OFFSET 0.03
-
-// #define NO_CORNOR 0
-// #define L_CORNOR 1
-// #define R_CORNOR 2
 
 #define DEBUG_MODE false
 
@@ -139,7 +133,7 @@ class LineSensors_c {
     w_left = line_sensors_data_norm[0] + (line_sensors_data_norm[1] * 0.5);
     w_right = line_sensors_data_norm[2] + (line_sensors_data_norm[1] * 0.5);
 
-    e_line = w_left - w_right + E_LINE_OFFSET;
+    e_line = w_right - w_left - E_LINE_OFFSET;
 
     if (DEBUG_MODE == true) {
       Serial.print("Normalised error signal=");

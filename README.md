@@ -29,6 +29,8 @@ Version description:
     * wheel speed estimation using encoder
     * low pass filter
     * task scheduler: multi-tasking programming for Arduino
+    * full PID
     * cascaded control architecture
         * Heading Controller (PID)->Motor Speed Controller (PID)
+    * refact all code
 * v5.0: LQR-based heading controller

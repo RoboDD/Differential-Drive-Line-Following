@@ -16,15 +16,7 @@
 // Class to operate the motor(s).
 class Motors_c {
  public:
-  // int MOTOR_PIN
-  // int DIR_PIN
-  // static const int L_PWM_PIN = 9  ;
-  // static const int L_DIR_PIN = 16 ;
-  // static const int R_PWM_PIN = 10 ;
-  // static const int R_DIR_PIN = 15 ;
-
-  // static const int FWD =  0 ;
-  // static const int REV =  1 ;
+  // Paramerters
 
   // Constructor, must exist.
   Motors_c() {}
