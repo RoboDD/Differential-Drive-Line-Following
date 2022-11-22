@@ -21,7 +21,9 @@
 Motors_c motors;
 LineSensors_c linesensors;
 Kinematics_c kinematics;
-
+PID_c heading_pid;
+PID_c wheel_spd_left_pid;
+PID_c wheel_spd_right_pid;
 unsigned long endtime = 0;
 
 int OFFLINE_COUNT = 0;
@@ -50,12 +52,13 @@ unsigned long prev_time_line_sensor = millis();
 unsigned long prev_time_encoder = millis();
 unsigned long prev_time_heading_control = millis();
 unsigned long prev_time_motor_speed_control = millis();
+unsigned long prev_time_record_data = millis();
 
-unsigned long interval_line_sensor = 10; // 50 Hz for read linesensor data
-unsigned long interval_encoder = 10; // 50 Hz for read linesensor data
+unsigned long interval_line_sensor = 10; // 100 Hz for read linesensor data
+unsigned long interval_encoder = 10; // 100 Hz for read linesensor data
 unsigned long interval_heading_control = 50; // 20 Hz for heading controller
-unsigned long interval_motor_speed_control = 10; // 50 Hz for motor speed controller
-
+unsigned long interval_motor_speed_control = 10; // 100 Hz for motor speed controller
+unsigned long interval_save_data = 20; // 50 Hz for record data
 
 void setup() {
   // Start serial, send debug text.
@@ -82,6 +85,10 @@ void setup() {
   setupEncoder0();
   setupEncoder1();
 
+  // init PID controllers
+  heading_pid.init(40, 0, 0, 50); //50ms=20Hz
+  wheel_spd_left_pid.init(0.57, 0, 0, 10); //10ms=50Hz
+  wheel_spd_right_pid.init(0.57, 0, 0, 10); //10ms=50Hz
 
   beep();
 }
@@ -125,7 +132,9 @@ void loop() {
     switch(TYPE_HEADING_CONTROL){
       case 0:// use pid controller
 
-        speed_sp = k_p * lpf_eline;  // simple P-controller
+        // speed_sp = k_p * lpf_eline;  // simple P-controller
+
+        speed_sp = heading_pid.calulate_PID(0,lpf_eline); // Full PID
 
         break;
       case 1://use lqr controller
@@ -145,13 +154,34 @@ void loop() {
     spd_error_left =  v_forward - lpf_l + speed_sp;
     spd_error_right =  v_forward - lpf_r - speed_sp;
 
-    pwm_sp_left = speed_kp * spd_error_left;
-    pwm_sp_right = speed_kp * spd_error_right;
+    // pwm_sp_left = speed_kp * spd_error_left;
+    // pwm_sp_right = speed_kp * spd_error_right;
    
+    pwm_sp_left = wheel_spd_left_pid.calulate_PID(0,spd_error_left);
+    pwm_sp_right = wheel_spd_left_pid.calulate_PID(0,spd_error_right);
+    
     motors.set_chasis_power(pwm_sp_left, pwm_sp_right);
     // end task 4
 
     prev_time_motor_speed_control = current_time;
+  }
+
+  // Task 5: record data
+  if (current_time - prev_time_save_data > interval_save_data){
+
+    // start task 5
+
+    //TODO
+
+    // end task 5
+    prev_time_save_data = current_time;
+  }
+
+  // Stop experiment
+  if (conor > 0){
+
+    delay(10000);
+
   }
 
 }
