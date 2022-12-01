@@ -31,7 +31,7 @@ LQR_c heading_lqr;
 
 // Parameters for encoder
 unsigned long endtime = 0; // for encoder
-
+float theta = 0; // Kinematics
 
 // Parameters for LPF
 double alpha = 0.3; // lpf parameter for encoder velocity estimation
@@ -39,7 +39,7 @@ double alpha_eline = 0.7; //lpf parameter for eline
 double lpf_l = 0;
 double lpf_r = 0;
 double lpf_eline = 0;
-
+double lpf_theta = 0;
 
 // Parameters for Heading Control
 float error_line;
@@ -54,7 +54,7 @@ int record_index_tem;
 // Parameters for Wheel Speed Control
 double speed_left;
 double speed_right;
-double v_forward = 45;
+double v_forward = 40;
 double pwm_sp_left;
 double pwm_sp_right;
 
@@ -111,7 +111,7 @@ void setup() {
   switch(TYPE_HEADING_CONTROL){
   case 0:// use pid heading controller
 
-    heading_pid.init(48, 0, 15, 50); //50ms=20Hz
+    heading_pid.init(46.4, 0, 30, 50); //50ms=20Hz
 
     break;
   case 1://use lqr heading controller
@@ -133,21 +133,21 @@ void setup() {
 /////////////////////////////////////////////////////////////////////////
 
 void loop() {
-  if (record_index < 200){
+  if (record_index < 100){
     current_time = millis();
 
     // Task 1: Read line sensor data
     if (current_time - prev_time_line_sensor > interval_line_sensor){
 
       // start task 1
-      Serial.println( "Normal" );
+      // Serial.println( "Normal" );
       error_line = linesensors.get_line_follow_error();
      
       // conor = linesensors.check_on_cornor();
       lpf_eline = ( lpf_eline * (1 - alpha_eline ) ) + ( error_line * alpha_eline ); //low pass filter
-      record_index_tem = record_index/10;
-      record[record_index_tem][record_index-(10*record_index_tem)] = lpf_eline;
-      record_index = record_index + 1;
+      // record_index_tem = record_index/10;
+      // record[record_index_tem][record_index-(10*record_index_tem)] = lpf_eline;
+      // record_index = record_index + 1;
       // end task 1
 
       prev_time_line_sensor = current_time;
@@ -163,6 +163,13 @@ void loop() {
       
       lpf_l = ( lpf_l * (1 - alpha ) ) + ( speed_left * alpha ); //low pass filter
       lpf_r = ( lpf_r * (1 - alpha ) ) + ( speed_right * alpha ); //low pass filter
+
+      theta = kinematics.get_theta(lpf_l, lpf_r, 10);
+      // lpf_theta = ( lpf_theta * (1 - alpha ) ) + ( theta * alpha );
+
+      record_index_tem = record_index/10;
+      record[record_index_tem][record_index-(10*record_index_tem)] = theta;
+      record_index = record_index + 1;
       // end task 2
 
       prev_time_encoder = current_time;

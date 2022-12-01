@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:leonardo",
-    "port": "COM3",
+    "port": "COM5",
     "sketch": "ass1_pololu.ino",
-    "programmer": "arduino:avrisp"
+    "programmer": "arduino:arduinoasispatmega32u4"
 }
