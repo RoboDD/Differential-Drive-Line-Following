@@ -34,3 +34,5 @@ Version description:
         * Heading Controller (PID)->Motor Speed Controller (PID)
     * refact all code
 * v5.0: LQR-based heading controller
+    * odometry (x,y, theta)
+    * data recoder
